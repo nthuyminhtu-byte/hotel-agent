@@ -1,0 +1,87 @@
+[
+  {
+    "time": "2026-11-06T15:57:26.958Z",
+    "name": "Elena Rossi",
+    "email": "elena.rossi@example.com",
+    "message": "The lift was out of order for three days and we were on teh 9th floor with a baby. We want compensation. Thanks, Elena",
+    "department": "Complaints & Feedback",
+    "urgency": "normal",
+    "summary": "Guest requests compensation for lift being out of order for 3 days on 9th floor with baby",
+    "status": "ESCALATED",
+    "reply": "Dear Elena,\n\nThank you for bringing this to our attention. I'm very sorry to hear about the inconvenience you experienced with the lift being out of order, especially with a baby on the 9th floor.\n\nYour request for compensation has been passed to our management team, and a member of staff will reply to you by e-mail to address this matter properly.\n\nBest regards,\nHotel Estrella"
+  },
+  {
+    "time": "2026-11-06T16:00:13.133Z",
+    "name": "Tom Becker",
+    "email": "tom.becker@example.com",
+    "message": "We arrive on the 20th. Is breakfast included in our booking? And can we still cancel if our plans change?",
+    "department": "Reservations",
+    "urgency": "normal",
+    "summary": "Guest asking about breakfast inclusion and cancellation policy for booking B002",
+    "status": "ANSWERED",
+    "reply": "Thank you for your message, Tom. Breakfast is not included in your booking, but you can add it for €12 per person per day in advance, or €14 per person per day at check-in if you prefer. \n\nYour booking is on a non-refundable rate, which means it cannot be cancelled for a refund. However, you may move your stay once to new dates within 6 months, subject to availability, for a €25 change fee.\n\nLooking forward to welcoming you on the 20th!"
+  },
+  {
+    "time": "2026-11-06T16:00:49.525Z",
+    "name": "Tom Becker",
+    "email": "someone@example.com",
+    "message": "We arrive on the 20th. Is breakfast included in our booking? And can we still cancel if our plans change?",
+    "department": "Reservations",
+    "urgency": "normal",
+    "summary": "Guest asking about breakfast inclusion and cancellation policy, no booking found",
+    "status": "ANSWERED",
+    "reply": "Dear Tom,\n\nThank you for contacting Hotel Estrella. I'm unable to find a reservation in our system under your name or email address. If you haven't completed your booking yet, please know that breakfast is available to add when you make your reservation for €12 per person per day, or €14 per person when added at check-in. Regarding cancellation, our Flexible rate allows free cancellation until 18:00 local time on the day before arrival, while our Non-refundable rate cannot be cancelled for a refund but may be moved once to new dates within 6 months for a €25 change fee. \n\nIf you have already made a booking under different details, I'll be happy to check it and confirm your specific breakfast and cancellation terms.\n\nBest regards,\nHotel Estrella"
+  },
+  {
+    "time": "2026-11-06T16:11:02.891Z",
+    "name": "Marta",
+    "email": "marta.puig@example.com",
+    "message": "Good evening, Is late check-out at 2pm possible on Friday? Our train is in the evening",
+    "department": "Front Desk & Guest Services",
+    "urgency": "normal",
+    "summary": "Guest asking about late check-out until 14:00 on departure day",
+    "status": "ANSWERED",
+    "reply": "Good evening, Marta! Yes, late check-out until 14:00 (2pm) is possible on your departure day, Friday the 16th of November, for €20 and subject to availability. You would need to ask reception on the day to confirm availability. This will be perfect for your evening train!",
+    "trace": [
+      {
+        "event": "model_call",
+        "step": 0,
+        "stop_reason": "tool_use",
+        "tool_use": true
+      },
+      {
+        "event": "tool_call",
+        "name": "lookup_booking",
+        "arguments": {},
+        "result": "{\"booking_id\":\"B001\",\"name\":\"Marta Puig\",\"email\":\"marta.puig@example.com\",\"check_in\":\"2026-11-13\",\"check_out\":\"2026-11-16\",\"room\":\"Double\",\"breakfast\":\"yes\",\"rate\":\"flexible\",\"paid\":\"no\"}"
+      },
+      {
+        "event": "model_call",
+        "step": 1,
+        "stop_reason": "tool_use",
+        "tool_use": true
+      },
+      {
+        "event": "tool_call",
+        "name": "log_request",
+        "arguments": {
+          "department": "Front Desk & Guest Services",
+          "urgency": "normal",
+          "summary": "Guest asking about late check-out until 14:00 on departure day",
+          "status": "ANSWERED"
+        },
+        "result": "{\"ok\":true}"
+      },
+      {
+        "event": "model_call",
+        "step": 2,
+        "stop_reason": "end_turn",
+        "tool_use": false
+      },
+      {
+        "event": "final_answer",
+        "text": "Good evening, Marta! Yes, late check-out until 14:00 (2pm) is possible on your departure day, Friday the 16th of November, for €20 and subject to availability. You would need to ask reception on the day to confirm availability. This will be perfect for your evening train!"
+      }
+    ]
+  },
+]

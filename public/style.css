@@ -1,0 +1,190 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #ffffff;
+  color: #1B2A41;
+  min-height: 100vh;
+}
+
+/* ── Layout ── */
+.page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+
+/* ── Header ── */
+header {
+  margin-bottom: 2.5rem;
+  border-bottom: 1px solid #e0e4ea;
+  padding-bottom: 1.25rem;
+}
+
+header h1 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+header p {
+  margin-top: 0.35rem;
+  font-size: 0.95rem;
+  color: #4a5a6e;
+}
+
+/* ── Weather strip ── */
+.weather-strip {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  margin-bottom: 2.5rem;
+  scrollbar-width: none;
+}
+
+.weather-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.weather-day {
+  flex: 0 0 auto;
+  min-width: 78px;
+  border: 1px solid #e0e4ea;
+  border-radius: 8px;
+  padding: 0.75rem 0.6rem;
+  text-align: center;
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.weather-day .day-label {
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #4a5a6e;
+}
+
+.weather-day .temp {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-top: 0.2rem;
+}
+
+.weather-day .rain {
+  color: #4a5a6e;
+  margin-top: 0.1rem;
+}
+
+.weather-day.today {
+  border-color: #C8553D;
+  background: #fff8f7;
+}
+
+.weather-day.today .day-label {
+  color: #C8553D;
+}
+
+.weather-loading,
+.weather-error {
+  font-size: 0.9rem;
+  color: #4a5a6e;
+  margin-bottom: 2.5rem;
+}
+
+/* ── Form ── */
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.contact-form h2 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-bottom: -0.25rem;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+input[type="text"],
+input[type="email"],
+textarea {
+  font-family: inherit;
+  font-size: 1rem;
+  color: #1B2A41;
+  background: #ffffff;
+  border: 1px solid #c5cdd8;
+  border-radius: 6px;
+  padding: 0.65rem 0.75rem;
+  width: 100%;
+  transition: border-color 0.15s;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+textarea:focus {
+  outline: none;
+  border-color: #C8553D;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+button[type="submit"] {
+  align-self: flex-start;
+  background: #C8553D;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  padding: 0.7rem 1.75rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+button[type="submit"]:hover {
+  background: #b04633;
+}
+
+button[type="submit"]:disabled {
+  background: #c5cdd8;
+  cursor: not-allowed;
+}
+
+/* ── Reply area ── */
+#reply-area {
+  margin-top: 2rem;
+  padding: 1.25rem 1.25rem;
+  background: #f7f9fb;
+  border-left: 3px solid #C8553D;
+  border-radius: 0 6px 6px 0;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  display: none;
+}
+
+#reply-area.visible {
+  display: block;
+}
+
+#reply-area.error {
+  border-left-color: #b04633;
+  background: #fff8f7;
+  color: #7a2a1a;
+}

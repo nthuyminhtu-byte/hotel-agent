@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hotel Estrella - Guest Services</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="page">
+    <header>
+      <h1>Hotel Estrella</h1>
+      <p>Barcelona - Guest Services</p>
+    </header>
+
+    <!-- Weather strip -->
+    <div id="weather-container">
+      <p class="weather-loading">Loading weather forecast...</p>
+    </div>
+
+    <!-- Contact form -->
+    <form class="contact-form" id="contact-form" novalidate>
+      <h2>How can we help?</h2>
+
+      <label>
+        Name
+        <input type="text" id="name" name="name" required autocomplete="name" placeholder="Your full name" />
+      </label>
+
+      <label>
+        Email
+        <input type="email" id="email" name="email" required autocomplete="email" placeholder="you@example.com" />
+      </label>
+
+      <label>
+        Please leave your message
+        <textarea id="message" name="message" required placeholder="Tell us what you need and we will get back to you."></textarea>
+      </label>
+
+      <button type="submit" id="send-btn">Send</button>
+    </form>
+
+    <!-- Reply appears here -->
+    <div id="reply-area" role="status" aria-live="polite"></div>
+  </div>
+
+  <script src="guest.js"></script>
+</body>
+</html>

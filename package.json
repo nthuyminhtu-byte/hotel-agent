@@ -1,0 +1,17 @@
+{
+  "name": "hotel-estrella",
+  "version": "1.0.0",
+  "description": "Hotel Estrella guest assistant",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "eval": "node eval/run.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.30.1",
+    "csv-parse": "7.0.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  }
+}

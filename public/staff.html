@@ -1,0 +1,297 @@
+<!-- NOTE: This page has no login yet. Anyone who knows the URL can view all guest requests. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hotel Estrella - Staff</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #ffffff;
+      color: #1B2A41;
+      font-size: 0.875rem;
+    }
+
+    /* ── Header ── */
+    header {
+      background: #1B2A41;
+      color: #ffffff;
+      padding: 0.75rem 1.25rem;
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+    }
+    header h1 { font-size: 1rem; font-weight: 600; }
+    header span { font-size: 0.8rem; opacity: 0.65; }
+
+    /* ── Toolbar ── */
+    .toolbar {
+      padding: 0.75rem 1.25rem;
+      border-bottom: 1px solid #e0e4ea;
+      display: flex;
+      gap: 0.5rem;
+    }
+    .toolbar button {
+      font-family: inherit;
+      font-size: 0.8rem;
+      font-weight: 500;
+      padding: 0.3rem 0.9rem;
+      border: 1px solid #c5cdd8;
+      border-radius: 4px;
+      background: #ffffff;
+      color: #1B2A41;
+      cursor: pointer;
+      transition: background 0.12s, border-color 0.12s;
+    }
+    .toolbar button:hover { background: #f0f2f5; }
+    .toolbar button.active {
+      background: #C8553D;
+      border-color: #C8553D;
+      color: #ffffff;
+    }
+
+    /* ── Table ── */
+    .table-wrap { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    thead tr {
+      background: #f0f2f5;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      letter-spacing: 0.05em;
+      color: #4a5a6e;
+    }
+    th, td {
+      padding: 0.55rem 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid #e0e4ea;
+      white-space: nowrap;
+    }
+    td.wrap { white-space: normal; max-width: 260px; }
+
+    tbody tr { cursor: pointer; transition: background 0.1s; }
+    tbody tr:hover { background: #f7f9fb; }
+    tbody tr.selected { background: #fff3f1; }
+
+    .badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.15rem 0.45rem;
+      border-radius: 3px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .badge.ANSWERED  { background: #e6f4ea; color: #2d6a3f; }
+    .badge.ESCALATED { background: #fff0ee; color: #b04633; }
+    .badge.high      { background: #fff0ee; color: #b04633; }
+    .badge.normal    { background: #f0f2f5; color: #4a5a6e; }
+
+    /* ── Trace panel ── */
+    #trace-panel {
+      display: none;
+      border-top: 2px solid #C8553D;
+      padding: 1rem 1.25rem 1.5rem;
+      background: #f7f9fb;
+    }
+    #trace-panel h2 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #4a5a6e;
+      margin-bottom: 0.75rem;
+    }
+    #trace-panel.open { display: block; }
+    #trace-list {
+      list-style: none;
+      font-size: 0.8rem;
+      line-height: 1.7;
+      font-family: ui-monospace, "Cascadia Code", "Consolas", monospace;
+      color: #1B2A41;
+    }
+    #trace-list li { border-bottom: 1px solid #e0e4ea; padding: 0.2rem 0; }
+    #trace-list li:last-child { border-bottom: none; }
+
+    .no-rows {
+      padding: 2rem 1.25rem;
+      color: #4a5a6e;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Hotel Estrella - Staff</h1>
+  <span>Guest requests</span>
+</header>
+
+<div class="toolbar">
+  <button class="active" data-filter="all">All</button>
+  <button data-filter="ESCALATED">Escalated</button>
+  <button data-filter="ANSWERED">Answered</button>
+</div>
+
+<div class="table-wrap">
+  <table id="requests-table">
+    <thead>
+      <tr>
+        <th>Time</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Message</th>
+        <th>Department</th>
+        <th>Urgency</th>
+        <th>Status</th>
+        <th>Reply</th>
+      </tr>
+    </thead>
+    <tbody id="table-body">
+      <tr><td colspan="8" class="no-rows">Loading...</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div id="trace-panel">
+  <h2>Trace</h2>
+  <ul id="trace-list"></ul>
+</div>
+
+<script>
+  let allRows = [];
+  let activeFilter = "all";
+  let selectedIndex = null;
+
+  // ── Fetch data ──────────────────────────────────────────────
+
+  async function loadRequests() {
+    try {
+      const res = await fetch("/api/requests");
+      if (!res.ok) throw new Error("Failed to load");
+      allRows = await res.json();
+      render();
+    } catch {
+      document.getElementById("table-body").innerHTML =
+        '<tr><td colspan="8" class="no-rows">Could not load requests.</td></tr>';
+    }
+  }
+
+  // ── Render table ────────────────────────────────────────────
+
+  function render() {
+    const rows = activeFilter === "all"
+      ? allRows
+      : allRows.filter((r) => r.status === activeFilter);
+
+    const tbody = document.getElementById("table-body");
+
+    if (rows.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="8" class="no-rows">No requests found.</td></tr>';
+      hideTrace();
+      return;
+    }
+
+    tbody.innerHTML = rows.map((row, i) => {
+      const time = new Date(row.time).toLocaleString("en-GB", {
+        day: "2-digit", month: "short", year: "numeric",
+        hour: "2-digit", minute: "2-digit",
+      });
+      const status   = row.status   || "";
+      const urgency  = row.urgency  || "";
+      const selected = selectedIndex === i ? " selected" : "";
+
+      return `<tr class="${selected}" data-index="${i}">
+        <td>${esc(time)}</td>
+        <td>${esc(row.name || "")}</td>
+        <td>${esc(row.email || "")}</td>
+        <td class="wrap">${esc(truncate(row.message || "", 80))}</td>
+        <td>${esc(row.department || "")}</td>
+        <td><span class="badge ${esc(urgency)}">${esc(urgency)}</span></td>
+        <td><span class="badge ${esc(status)}">${esc(status)}</span></td>
+        <td class="wrap">${esc(truncate(row.reply || "", 80))}</td>
+      </tr>`;
+    }).join("");
+
+    // Re-attach click listeners
+    tbody.querySelectorAll("tr[data-index]").forEach((tr) => {
+      tr.addEventListener("click", () => {
+        const i = Number(tr.dataset.index);
+        if (selectedIndex === i) {
+          selectedIndex = null;
+          hideTrace();
+        } else {
+          selectedIndex = i;
+          showTrace(rows[i].trace || []);
+        }
+        render();
+      });
+    });
+  }
+
+  // ── Trace panel ─────────────────────────────────────────────
+
+  function showTrace(trace) {
+    const panel = document.getElementById("trace-panel");
+    const list  = document.getElementById("trace-list");
+
+    list.innerHTML = trace.map((entry) => {
+      let line = "";
+      if (entry.event === "model_call") {
+        line = `Step ${entry.step}  model_call  stop_reason=${entry.stop_reason}  tool_use=${entry.tool_use}`;
+      } else if (entry.event === "tool_call") {
+        const args = JSON.stringify(entry.arguments || {});
+        line = `Step —  tool_call  name=${entry.name}  args=${truncate(args, 80)}  result=${truncate(entry.result || "", 200)}`;
+      } else if (entry.event === "final_answer") {
+        line = `final_answer  ${truncate(entry.text || "", 120)}`;
+      } else {
+        line = JSON.stringify(entry);
+      }
+      return `<li>${esc(line)}</li>`;
+    }).join("");
+
+    panel.classList.add("open");
+    panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  function hideTrace() {
+    document.getElementById("trace-panel").classList.remove("open");
+    selectedIndex = null;
+  }
+
+  // ── Filter buttons ───────────────────────────────────────────
+
+  document.querySelectorAll(".toolbar button").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      activeFilter = btn.dataset.filter;
+      selectedIndex = null;
+      hideTrace();
+      document.querySelectorAll(".toolbar button").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      render();
+    });
+  });
+
+  // ── Helpers ──────────────────────────────────────────────────
+
+  function esc(str) {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function truncate(str, n) {
+    return str.length > n ? str.slice(0, n) + "..." : str;
+  }
+
+  loadRequests();
+</script>
+</body>
+</html>
